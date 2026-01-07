@@ -23,8 +23,12 @@ with col1:
 with col2:
     parch = st.number_input("Parents/Children aboard", 0, 10, 0)
     fare = st.number_input("Fare", 0.0, 600.0, 32.0)
-    embarked_q = st.selectbox("Embarked_Q", [0,1])
-    embarked_s = st.selectbox("Embarked_S", [0,1])
+    embarked = st.selectbox("Embarked", ["C", "Q", "S"])  # اختيار واحد فقط
+
+# تحويل Embarked لـ one-hot encoding
+embarked_q = 1 if embarked == "Q" else 0
+embarked_s = 1 if embarked == "S" else 0
+# C سيكون False False تلقائي
 
 # Prepare input dataframe
 input_data = pd.DataFrame([{
