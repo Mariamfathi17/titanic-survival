@@ -10,23 +10,6 @@ st.set_page_config(page_title="Titanic Survival Predictor", layout="centered")
 st.title("🛳 Titanic Survival Predictor")
 st.write("Predict whether a passenger would survive based on their features.")
 
-# Card style
-st.markdown("""
-    <style>
-    .stButton>button {
-        background-color: #4CAF50;
-        color:white;
-        height:3em;
-        width:100%;
-        border-radius:10px;
-        font-size:18px;
-    }
-    .stSlider>div>div>div>div {
-        color: #4CAF50;
-    }
-    </style>
-""", unsafe_allow_html=True)
-
 # Main input area
 st.subheader("Enter Passenger Details:")
 
@@ -41,7 +24,7 @@ with col1:
 with col2:
     parch = st.number_input("Parents/Children aboard", 0, 10, 0)
     fare = st.number_input("Fare", 0.0, 600.0, 32.0)
-    embarked = st.selectbox("Embarked", ["C", "Q", "S"])  # اختيار واحد فقط
+    embarked = st.selectbox("Embarked", ["C", "Q", "S"])
 
 # Convert Embarked to one-hot encoding
 embarked_q = 1 if embarked == "Q" else 0
@@ -65,18 +48,19 @@ if st.button("Predict Survival"):
     prediction = model.predict(input_data)[0]
     probability = model.predict_proba(input_data)[0][1]
 
-    # Display result in a friendly card
     if prediction == 1:
         st.markdown(f"""
-            <div style="background-color:#d4edda; padding:20px; border-radius:10px;">
-                <h3 style="color:#155724;">✅ The passenger is likely to survive!</h3>
+            <div style="background-color:#d4edda; padding:20px; border-radius:10px; text-align:center;">
+                <h2 style="color:#155724;">✅ The passenger is likely to survive!</h2>
                 <p>Probability: {probability:.2f}</p>
+                <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" width="100">
             </div>
         """, unsafe_allow_html=True)
     else:
         st.markdown(f"""
-            <div style="background-color:#f8d7da; padding:20px; border-radius:10px;">
-                <h3 style="color:#721c24;">❌ The passenger is unlikely to survive.</h3>
+            <div style="background-color:#f8d7da; padding:20px; border-radius:10px; text-align:center;">
+                <h2 style="color:#721c24;">❌ The passenger is unlikely to survive.</h2>
                 <p>Probability: {probability:.2f}</p>
+                <img src="https://cdn-icons-png.flaticon.com/512/1828/1828843.png" width="100">
             </div>
         """, unsafe_allow_html=True)
