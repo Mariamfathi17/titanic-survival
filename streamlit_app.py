@@ -4,7 +4,7 @@ import pickle
 
 
 with open('logistic_model.pkl', 'rb') as f:
-    model = pickle.load(f)
+    model=pickle.load(f)
 print(model)
 
 
