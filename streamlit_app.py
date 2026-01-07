@@ -5,24 +5,9 @@ import joblib
 # Load the trained model
 model = joblib.load('logistic_model.joblib')  # الموديل لازم joblib
 
-st.set_page_config(page_title="Titanic Survival Predictor", layout="wide")
+st.set_page_config(page_title="Titanic Survival Predictor", layout="centered")
 st.title("🛳 Titanic Survival Predictor")
 st.write("Predict whether a passenger would survive based on their features.")
-
-# Sidebar for feature visualization
-st.sidebar.header("Upload Titanic Dataset for Visualization")
-uploaded_file = st.sidebar.file_uploader("Upload CSV", type=["csv"])
-
-if uploaded_file:
-    df = pd.read_csv(uploaded_file)
-    st.sidebar.subheader("Dataset Preview")
-    st.sidebar.dataframe(df.head())
-
-    features = ['Pclass','Sex','Age','SibSp','Parch','Fare','Embarked_Q','Embarked_S']
-    st.sidebar.subheader("Feature Distributions")
-    for feature in features:
-        counts = df[feature].value_counts()
-        st.sidebar.bar_chart(counts)
 
 # Main input area
 st.subheader("Enter Passenger Details:")
