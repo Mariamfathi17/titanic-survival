@@ -2,39 +2,63 @@ import streamlit as st
 import pandas as pd
 import joblib
 
-# Load model
-model = joblib.load('logistic_model.joblib') 
+# Load the trained model
+model = joblib.load('logistic_model.joblib')  # الموديل لازم joblib
 
-st.title("Titanic Survival Analysis & Prediction")
+st.set_page_config(page_title="Titanic Survival Predictor", layout="wide")
+st.title("🛳 Titanic Survival Predictor")
+st.write("Predict whether a passenger would survive based on their features.")
 
-uploaded_file = st.file_uploader("Upload your Titanic CSV", type=["csv"])
+# Sidebar for feature visualization
+st.sidebar.header("Upload Titanic Dataset for Visualization")
+uploaded_file = st.sidebar.file_uploader("Upload CSV", type=["csv"])
+
 if uploaded_file:
     df = pd.read_csv(uploaded_file)
-    st.dataframe(df.head())
+    st.sidebar.subheader("Dataset Preview")
+    st.sidebar.dataframe(df.head())
 
     features = ['Pclass','Sex','Age','SibSp','Parch','Fare','Embarked_Q','Embarked_S']
-    st.subheader("Feature Visualizations")
+    st.sidebar.subheader("Feature Distributions")
     for feature in features:
-        st.write(f"### {feature}")
-        st.bar_chart(df[feature].value_counts())
+        counts = df[feature].value_counts()
+        st.sidebar.bar_chart(counts)
 
-    # Prediction section
-    st.subheader("Make Predictions")
-    input_data = {}
-    input_data['Pclass'] = st.selectbox("Pclass", [1,2,3])
-    input_data['Sex'] = st.selectbox("Sex (0=female, 1=male)", [0,1])
-    input_data['Age'] = st.number_input("Age", 0, 100, 30)
-    input_data['SibSp'] = st.number_input("SibSp", 0, 10, 0)
-    input_data['Parch'] = st.number_input("Parch", 0, 10, 0)
-    input_data['Fare'] = st.number_input("Fare", 0.0, 600.0, 32.0)
-    input_data['Embarked_Q'] = st.selectbox("Embarked_Q", [0,1])
-    input_data['Embarked_S'] = st.selectbox("Embarked_S", [0,1])
+# Main input area
+st.subheader("Enter Passenger Details:")
 
-    input_df = pd.DataFrame([input_data])
-    if st.button("Predict Survival"):
-        pred = model.predict(input_df)[0]
-        prob = model.predict_proba(input_df)[0][1]
-        if pred == 1:
-            st.success(f"Likely to survive! Probability: {prob:.2f}")
-        else:
-            st.error(f"Unlikely to survive. Probability: {prob:.2f}")
+col1, col2 = st.columns(2)
+
+with col1:
+    pclass = st.selectbox("Pclass", [1,2,3])
+    sex = st.selectbox("Sex (0=female, 1=male)", [0,1])
+    age = st.slider("Age", 0, 100, 30)
+    sibsp = st.number_input("Siblings/Spouses aboard", 0, 10, 0)
+
+with col2:
+    parch = st.number_input("Parents/Children aboard", 0, 10, 0)
+    fare = st.number_input("Fare", 0.0, 600.0, 32.0)
+    embarked_q = st.selectbox("Embarked_Q", [0,1])
+    embarked_s = st.selectbox("Embarked_S", [0,1])
+
+# Prepare input dataframe
+input_data = pd.DataFrame([{
+    'Pclass': pclass,
+    'Sex': sex,
+    'Age': age,
+    'SibSp': sibsp,
+    'Parch': parch,
+    'Fare': fare,
+    'Embarked_Q': embarked_q,
+    'Embarked_S': embarked_s
+}])
+
+# Prediction button
+if st.button("Predict Survival"):
+    prediction = model.predict(input_data)[0]
+    probability = model.predict_proba(input_data)[0][1]
+
+    if prediction == 1:
+        st.success(f"✅ The passenger is likely to survive! (Probability: {probability:.2f})")
+    else:
+        st.error(f"❌ The passenger is unlikely to survive. (Probability: {probability:.2f})")
