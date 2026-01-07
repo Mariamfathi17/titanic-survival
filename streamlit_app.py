@@ -1,22 +1,17 @@
 import streamlit as st
 import pandas as pd
-import seaborn as sns
 import pickle
 
-# Load the trained model
+# Load model
 with open('logistic_model.pkl', 'rb') as file:
     model = pickle.load(file)
 
-# Title
 st.title("Titanic Survival Analysis & Prediction")
 
 # Upload CSV
-st.sidebar.header("Upload your Titanic dataset")
-uploaded_file = st.sidebar.file_uploader("Choose a CSV file", type=["csv"])
-
+uploaded_file = st.file_uploader("Upload your Titanic CSV", type=["csv"])
 if uploaded_file:
     df = pd.read_csv(uploaded_file)
-
     st.subheader("Dataset Preview")
     st.dataframe(df.head())
 
@@ -27,17 +22,11 @@ if uploaded_file:
 
     for feature in features:
         st.write(f"### {feature}")
-        if df[feature].dtype in ['int64', 'float64']:
-            # Numerical feature: histogram with Seaborn
-            st.write(sns.histplot(df[feature].dropna(), kde=True, bins=20, color='skyblue'))
-        else:
-            # Categorical feature: countplot
-            st.write(sns.countplot(x=df[feature], palette='Set2'))
+        counts = df[feature].value_counts()
+        st.bar_chart(counts)
 
     # Prediction Section
     st.subheader("Make Predictions")
-    st.write("Input feature values to predict survival:")
-
     input_data = {}
     input_data['Pclass'] = st.selectbox("Pclass", [1,2,3])
     input_data['Sex'] = st.selectbox("Sex (0=female, 1=male)", [0,1])
@@ -57,4 +46,3 @@ if uploaded_file:
             st.success(f"The passenger is likely to survive! (Probability: {probability:.2f})")
         else:
             st.error(f"The passenger is unlikely to survive. (Probability: {probability:.2f})")
-
