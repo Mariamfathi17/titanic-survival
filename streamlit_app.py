@@ -3,7 +3,7 @@ import pandas as pd
 import joblib
 
 # Load model
-model = joblib.load('logistic_model.joblib')  # احفظ الموديل المحلي بـ joblib
+model = joblib.load('logistic_model.joblib') 
 
 st.title("Titanic Survival Analysis & Prediction")
 
