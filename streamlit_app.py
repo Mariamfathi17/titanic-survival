@@ -5,9 +5,27 @@ import joblib
 # Load the trained model
 model = joblib.load('logistic_model.joblib')  # الموديل لازم joblib
 
+# Page config
 st.set_page_config(page_title="Titanic Survival Predictor", layout="centered")
 st.title("🛳 Titanic Survival Predictor")
 st.write("Predict whether a passenger would survive based on their features.")
+
+# Card style
+st.markdown("""
+    <style>
+    .stButton>button {
+        background-color: #4CAF50;
+        color:white;
+        height:3em;
+        width:100%;
+        border-radius:10px;
+        font-size:18px;
+    }
+    .stSlider>div>div>div>div {
+        color: #4CAF50;
+    }
+    </style>
+""", unsafe_allow_html=True)
 
 # Main input area
 st.subheader("Enter Passenger Details:")
@@ -25,10 +43,9 @@ with col2:
     fare = st.number_input("Fare", 0.0, 600.0, 32.0)
     embarked = st.selectbox("Embarked", ["C", "Q", "S"])  # اختيار واحد فقط
 
-# تحويل Embarked لـ one-hot encoding
+# Convert Embarked to one-hot encoding
 embarked_q = 1 if embarked == "Q" else 0
 embarked_s = 1 if embarked == "S" else 0
-# C سيكون False False تلقائي
 
 # Prepare input dataframe
 input_data = pd.DataFrame([{
@@ -43,11 +60,23 @@ input_data = pd.DataFrame([{
 }])
 
 # Prediction button
+st.write("")  # Space
 if st.button("Predict Survival"):
     prediction = model.predict(input_data)[0]
     probability = model.predict_proba(input_data)[0][1]
 
+    # Display result in a friendly card
     if prediction == 1:
-        st.success(f"✅ The passenger is likely to survive! (Probability: {probability:.2f})")
+        st.markdown(f"""
+            <div style="background-color:#d4edda; padding:20px; border-radius:10px;">
+                <h3 style="color:#155724;">✅ The passenger is likely to survive!</h3>
+                <p>Probability: {probability:.2f}</p>
+            </div>
+        """, unsafe_allow_html=True)
     else:
-        st.error(f"❌ The passenger is unlikely to survive. (Probability: {probability:.2f})")
+        st.markdown(f"""
+            <div style="background-color:#f8d7da; padding:20px; border-radius:10px;">
+                <h3 style="color:#721c24;">❌ The passenger is unlikely to survive.</h3>
+                <p>Probability: {probability:.2f}</p>
+            </div>
+        """, unsafe_allow_html=True)
